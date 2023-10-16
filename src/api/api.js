@@ -20,42 +20,8 @@ export const getConditionRequest = async (department, classOf, category, course)
 /** 졸업 조건 input api */
 export const inputConditionRequest = async (body) => {
   try {
+    console.log("여기서부터 데이터비교")
     console.log(body)
-    const res = await axios({
-      method: "PUT",
-      url: `inputCondition`,
-      data: {
-        type: "단일전공",
-        student_number: "12",
-        course: "심화과정",
-        major: "컴퓨터공학과",
-        condition_detail: [
-          {
-            credit: "84",
-            grade: "",
-            kind_of_condition: "00",
-            kind_of_subject: "전공",
-            subject_information: "공학요소",
-            subject_list: "",
-            the_number_of: "",
-          },
-        ],
-        english_condition: [
-          {
-            english_level: "S1",
-            list_of_subject: "EAS1,EAS2",
-          },
-          {
-            english_level: "S4",
-            list_of_subject: " BasicEAS,EAS1,EAS2",
-          },
-        ],
-      }
-    });
-    console.log(body)
-    return res;
-  } catch (error) {
-    console.log(error.config.data)
     console.log({
       type: "단일전공",
       student_number: "12",
@@ -83,7 +49,43 @@ export const inputConditionRequest = async (body) => {
         },
       ],
     });
-    console.log(JSON.stringify(body))
+    const res = await axios({
+      method: "PUT",
+      url: `inputCondition`,
+      data: body
+    });
+
+    return res;
+  } catch (error) {
+    console.log(error)
+    // console.log({
+    //   type: "단일전공",
+    //   student_number: "12",
+    //   course: "심화과정",
+    //   major: "컴퓨터공학과",
+    //   condition_detail: [
+    //     {
+    //       credit: "84",
+    //       grade: "",
+    //       kind_of_condition: "00",
+    //       kind_of_subject: "전공",
+    //       subject_information: "공학요소",
+    //       subject_list: "",
+    //       the_number_of: "",
+    //     },
+    //   ],
+    //   english_condition: [
+    //     {
+    //       english_level: "S1",
+    //       list_of_subject: "EAS1,EAS2",
+    //     },
+    //     {
+    //       english_level: "S4",
+    //       list_of_subject: " BasicEAS,EAS1,EAS2",
+    //     },
+    //   ],
+    // });
+    // console.log(JSON.stringify(body))
     return error;
   }
 }

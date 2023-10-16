@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { arrow_bottom, arrow_top } from "../assets";
 
 const SelectBoxCondition = ({
   num,
+  kind,
   conditionDetailList,
   setConditionDetailList,
 }) => {
@@ -38,10 +40,31 @@ const SelectBoxCondition = ({
     return code;
   };
 
+  /** 코드를 value로 바꿔주는 함수 */
+  const codeToValue = () => {
+    switch (kind) {
+      case "00":
+        setValue("해당 종류의 과목 X 학점 이상");
+        break;
+      case "01":
+        setValue("해당 종류의 과목 X개 이상");
+        break;
+      case "02":
+        setValue("과목 리스트중 X 과목 이상 필수");
+        break;
+    }
+  };
+
   /** value값 바뀔 때 마다 학과 세팅 */
   useEffect(() => {
     kindOfConditionHandler(num, valueToCode(value));
   }, [value]);
+
+  /** 초기 조회시 세팅 */
+  useEffect(() => {
+    kind && kindOfConditionHandler(num, kind);
+    codeToValue();
+  }, []);
 
   return (
     <div
@@ -56,7 +79,12 @@ const SelectBoxCondition = ({
     >
       <div className="flex items-center justify-between px-[3px] border-[1px] rounded-[3px] w-[200px] h-[32px]">
         <div>{value}</div>
-        {/** 여기 이미지 들어가야함 */}
+
+        <img
+          src={isClicked ? arrow_top : arrow_bottom}
+          width={24}
+          height={24}
+        />
       </div>
       {departmentList.map((i, j) => {
         return (

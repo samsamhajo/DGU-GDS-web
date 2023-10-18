@@ -86,7 +86,7 @@ const Condition = () => {
     course
   ) => {
     getConditionRequest(department, classOf, category, course).then((res) => {
-      console.log(res);
+      console.log(res.data);
       let temp = conditionDetailList;
       let condition = res.data.condition_detail;
       let english = res.data.english_condition;
@@ -253,7 +253,7 @@ const Condition = () => {
     let length = temp.english_condition.length;
     temp.english_condition[length] = {
       english_level: "",
-      subject_list: "",
+      list_of_subject: "",
     };
     setConditionDetailList({ ...temp });
   };
@@ -278,12 +278,12 @@ const Condition = () => {
   const addEnglishList = (key, num, e) => {
     if (key == "Enter") {
       let temp = conditionDetailList;
-      let listOfSubject = temp.english_condition[num].subject_list;
+      let listOfSubject = temp.english_condition[num].list_of_subject;
 
       listOfSubject
         ? (listOfSubject += `,${e.target.value}`)
         : (listOfSubject = e.target.value);
-      temp.english_condition[num].subject_list = listOfSubject;
+      temp.english_condition[num].list_of_subject = listOfSubject;
       e.target.value = "";
 
       setConditionDetailList({ ...temp });
@@ -293,13 +293,13 @@ const Condition = () => {
   /** 영어과목리스트 삭제 함수 */
   const deleteEnglishList = (tIndex, bIndex) => {
     let temp = conditionDetailList;
-    let listOfSubject = temp.english_condition[tIndex].subject_list;
+    let listOfSubject = temp.english_condition[tIndex].list_of_subject;
 
     listOfSubject = listOfSubject.split(",");
     listOfSubject.splice(bIndex, 1);
     listOfSubject = listOfSubject.join();
 
-    temp.condition_detail[tIndex].subject_list = listOfSubject;
+    temp.english_condition[tIndex].list_of_subject = listOfSubject;
 
     setConditionDetailList({ ...temp });
   };
@@ -307,7 +307,7 @@ const Condition = () => {
   /** 과목 리스트 1개일 경우 삭제 함수 */
   const deleteEnglishListFirst = (tIndex) => {
     let temp = conditionDetailList;
-    temp.english_condition[tIndex].subject_list = "";
+    temp.english_condition[tIndex].list_of_subject = "";
 
     setConditionDetailList({ ...temp });
   };
@@ -503,8 +503,8 @@ const Condition = () => {
                 }
                 className="mr-[15px] mb-[5px] w-[180px] h-[32px] border-[1px] rounded-[3px] px-[5px]"
               />
-              {i.subject_list && reg.test(i.subject_list)
-                ? i.subject_list.split(",").map((x, y) => {
+              {i.list_of_subject && reg.test(i.list_of_subject)
+                ? i.list_of_subject.split(",").map((x, y) => {
                     return (
                       <div className="mb-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
                         {x}
@@ -515,9 +515,9 @@ const Condition = () => {
                       </div>
                     );
                   })
-                : i.subject_list && (
+                : i.list_of_subject && (
                     <div className="mb-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
-                      {i.subject_list}
+                      {i.list_of_subject}
                       <div onClick={() => deleteEnglishListFirst(index)}>
                         {" "}
                         <img src={cancel} width={18} height={18} />

@@ -134,18 +134,23 @@ const StudentInfoInput = () => {
     // 입학년도로 졸업조건 불러와서 저장
     enterList.forEach((year) => {
       getConditionRequest(major, year, "단일전공", "심화과정").then((res) => {
-        setConditionArr([...conditionArr, res.data]);
+        setConditionArr([...conditionArr, { year: year, ...res.data }]);
       });
     });
   };
 
   /** 졸업조건 찾아서 졸업 판별 */
   const graduationSimulator = () => {
-    // 졸업 조건 찾아서
-    // studentInfoArr.forEach((el) => {
-    //   conditionArr.forEacg
-    //   if(el[0].student_code.substr(2,2) == )
-    // });
+    let totalResult = { studentInfoList: [] };
+
+    studentInfoArr.forEach((el) => {
+      conditionArr.forEach((condition) => {
+        // 년도가 같으면 졸업 판별 시작
+        if (el[0].student_code.substr(2, 2) == condition.year) {
+          condition.forEach((data) => {});
+        }
+      });
+    });
   };
 
   return (

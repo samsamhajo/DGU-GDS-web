@@ -214,7 +214,7 @@ const Condition = () => {
       subject_information: "",
       kind_of_condition: "03",
       kind_of_subject: "",
-      credit: totalGrade,
+      credit: averageGrade,
       subject_list: "",
       the_number_of: "",
       grade: "",
@@ -223,10 +223,10 @@ const Condition = () => {
       subject_information: "",
       kind_of_condition: "04",
       kind_of_subject: "",
-      credit: "",
+      credit: totalGrade,
       subject_list: "",
       the_number_of: "",
-      grade: averageGrade,
+      grade: "",
     };
 
     let body = {

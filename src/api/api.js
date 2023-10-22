@@ -1,14 +1,19 @@
 import axios, { AxiosError } from "axios";
 
+const host = window.location.hostname === "localhost"
+  ? 'http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com'
+  : "api";
+
+
 // axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_KEY;
-axios.defaults.baseURL = "http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com/";
+axios.defaults.baseURL = window.location.hostname === "localhost" ? "http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com" : "api"
 
 /** 졸업 조건 api */
 export const getConditionRequest = async (department, classOf, category, course) => {
   try {
     const res = await axios({
       method: "GET",
-      url: `getCondition/${department}/${classOf}/${category}/${course}`
+      url: `/getCondition/${department}/${classOf}/${category}/${course}`
     });
     return res;
   } catch (error) {
@@ -51,7 +56,7 @@ export const inputConditionRequest = async (body) => {
     });
     const res = await axios({
       method: "PUT",
-      url: `inputCondition`,
+      url: `/inputCondition`,
       data: body
     });
 
@@ -67,7 +72,7 @@ export const simulationRequest = async (body) => {
   try {
     const res = await axios({
       method: "PUT",
-      url: `inputMultipleStudents`,
+      url: `/inputMultipleStudents`,
       data: body
     })
 
@@ -83,7 +88,7 @@ export const resultRequest = async (year, semester, major) => {
   try {
     const res = await axios({
       method: "GET",
-      url: `getStudent/${year}/${semester}/${major}`,
+      url: `/getStudent/${year}/${semester}/${major}`,
     })
     return res;
   } catch (error) {

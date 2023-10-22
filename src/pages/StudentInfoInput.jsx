@@ -43,6 +43,7 @@ const StudentInfoInput = () => {
         // 파일이 취득분류표인경우
         if (type == 1) {
           setClassificationArr([...classificationArr, jsonData]);
+          console.log(jsonData);
         }
       };
       reader.readAsArrayBuffer(fileArr[i]);
@@ -79,8 +80,25 @@ const StudentInfoInput = () => {
   /** 파싱한 학수강좌번호, 성적으로 비교하고 전체성적표, 취득분류표 합치기 */
   const matchingHandler = () => {
     classificationArr.forEach((jsonData, index) => {
-      let parsingData = classNumberParser(jsonData);
+      let parsingData = classNumberParser(jsonData); // 파싱데이터
       console.log(parsingData);
+
+      let student_credit = 0; // 학생 총 취득학점
+      let student_gpa = 0; // 학생 평점 평균
+
+      // 총 취득 학점, 평점 평균 파싱
+      jsonData.forEach((x) => {
+        x.forEach((y) => {
+          if (y.length > 0) {
+            y.includes("총취득학점") &&
+              (student_credit = y.split("총취득학점:")[1]);
+
+            y.includes("평점평균") && (student_gpa = y.split("평점평균:")[1]);
+          }
+        });
+      });
+
+      // 합치는 로직
       for (const x of gradeArr) {
         let count = parsingData.length;
         parsingData.forEach((el) => {
@@ -106,6 +124,8 @@ const StudentInfoInput = () => {
               english_level: jsonData[3][20].split(":")[1],
             },
             x,
+            student_gpa,
+            student_credit,
           ];
 
           let stuTemp = studentInfoArr;
@@ -142,12 +162,79 @@ const StudentInfoInput = () => {
   /** 졸업조건 찾아서 졸업 판별 */
   const graduationSimulator = () => {
     let totalResult = { studentInfoList: [] };
+    let defaultInfo = {
+      graduation_year: graduation_year,
+      graduation_semester: graduation_semester,
+      student_major: major,
+      student_code: "",
+      student_name: "",
+      student_course: "",
+      student_type: "단일전공",
+      student_graduation: "",
+      student_document: "P",
+    }; // 학생 기본정보
+    let condition_result = []; // 조건 판별 결과
 
     studentInfoArr.forEach((el) => {
+      // 기본정보 할당
+      defaultInfo.student_code = el[0].student_code;
+      defaultInfo.student_name = el[0].student_name;
+      defaultInfo.student_graduation = el[0].student_course;
+
       conditionArr.forEach((condition) => {
         // 년도가 같으면 졸업 판별 시작
         if (el[0].student_code.substr(2, 2) == condition.year) {
-          condition.forEach((data) => {});
+          condition.condition_detail.forEach((item) => {
+            // 해당종류의 과목 X학점 이상
+            if (item.kind_of_condition == "00") {
+              let filteringIndex = el[1][0].findIndex(item.subject_information); // 필터링 할  index
+              let creditIndex = el[1][0].findIndex("학점"); // 학점 index
+              let subject = item.kind_of_subject; // 과목 종류
+              let sum = 0;
+
+              el[1].forEach((value) => {
+                if (value[filteringIndex] == subject) {
+                  sum += value[creditIndex];
+                }
+              });
+            }
+            // 해당종류의 과목 X개 이상
+            if (item.kind_of_condition == "01") {
+              let filteringIndex = el[1][0].findIndex(item.subject_information); // 필터링 할  index
+              let subject = item.kind_of_subject; // 과목 종류
+              let sum = 0;
+
+              el[1].forEach((value) => {
+                if (value[filteringIndex] == subject) {
+                  sum += 1;
+                }
+              });
+            }
+            // 과목리스트 중 X개 이상 필수
+            if (item.kind_of_condition == "02") {
+              let subjectArr = item.subject_list.split(","); // 과목 리스트
+              let sum = 0;
+
+              el[1].forEach((value) => {
+                if (subjectArr.find(value)) {
+                  sum += 1;
+                }
+              });
+            }
+            // 학점 평점
+            if (item.kind_of_condition == "03") {
+              if (Number(el[2]) >= Number(item.grade)) {
+              }
+            }
+            // 총 학점
+            if (item.kind_of_condition == "04") {
+              if (Number(el[3]) >= Number(item.credit)) {
+              }
+            }
+          });
+
+          // 영어시뮬레이션
+          condition.english_condtion.forEach((item) => {});
         }
       });
     });

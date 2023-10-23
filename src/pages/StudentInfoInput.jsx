@@ -471,7 +471,11 @@ const StudentInfoInput = () => {
     });
 
     simulationRequest(totalResult).then((res) => {
-      console.log(res);
+      if (res.data == "저장 완료") {
+        alert("저장되었습니다!");
+        return;
+      }
+      alert("실패하였습니다.");
     });
   };
 

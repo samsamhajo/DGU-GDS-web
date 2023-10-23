@@ -33,10 +33,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: yarn install
+        run: rm -rf node_modules && rm -rf yarn.lock && yarn cache clean && yarn install
 
       - name: Run build
-        run: yarn update && yarn build
+        run: yarn build
 
       - name: Current timestamp
         id: timestamp

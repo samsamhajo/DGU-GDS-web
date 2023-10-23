@@ -1,12 +1,7 @@
-import axios, { AxiosError } from "axios";
-
-const host = window.location.hostname === "localhost"
-  ? 'http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com'
-  : "api";
-
+import axios from "axios";
 
 // axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_KEY;
-axios.defaults.baseURL = window.location.hostname === "localhost" ? "http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com" : "api"
+axios.defaults.baseURL = "http://Test1-env.eba-6kqxe2es.ap-northeast-2.elasticbeanstalk.com"
 
 /** 졸업 조건 api */
 export const getConditionRequest = async (department, classOf, category, course) => {

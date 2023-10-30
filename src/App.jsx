@@ -15,7 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <GlobalNavBar />
-      <div class="px-[40px] py-[20px]">
+      <div class="px-[40px] py-[20px] min-w-[1400px]">
         <Routes>
           <Route>
             <Route path="/*" element={<Main />} />

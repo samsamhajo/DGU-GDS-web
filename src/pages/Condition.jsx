@@ -315,7 +315,50 @@ const Condition = () => {
   /** 정규식 , 있는지 유무 테스트 위해 */
   const reg = /,/;
 
-  /** 졸업 조건  */
+  /** 변경된 과목 input추가*/
+  const addSubejctInput = (index1, index2) => {
+    let temp1 = conditionDetailList;
+    let temp2 = temp1.condition_detail[index1].subject_list.split(",");
+
+    temp2[index2] += "@";
+    temp1.condition_detail[index1].subject_list = temp2.join();
+    setConditionDetailList({ ...temp1 });
+  };
+
+  /** 변경된 과목 등록 */
+  const addSubejct = (index1, index2, index3, value) => {
+    let temp1 = conditionDetailList;
+    let temp2 = temp1.condition_detail[index1].subject_list.split(",");
+    let temp3 = temp2[index2].split("@");
+
+    temp3[index3] = value;
+    temp2[index2] = temp3.join("@");
+    temp1.condition_detail[index1].subject_list = temp2.join();
+
+    setConditionDetailList({ ...temp1 });
+  };
+
+  /** 과목리스트에서 변경과목 삭제 */
+  const removeAddtionalSubject = (index1, index2, index3) => {
+    let temp1 = conditionDetailList;
+    let temp2 = temp1.condition_detail[index1].subject_list.split(",");
+    let temp3 = temp2[index2].split("@");
+
+    temp3.splice(index3, 1);
+    temp2[index2] = temp3.join("@");
+
+    // 값이 있는경우
+    if (temp2[index2]) {
+      temp1.condition_detail[index1].subject_list = temp2.join();
+    }
+    // 첫번째 값 삭제하여 값이 없는경우
+    if (temp2[index2] == "") {
+      temp2.splice(index2, 1);
+      temp1.condition_detail[index1].subject_list = temp2.join();
+    }
+
+    setConditionDetailList({ ...temp1 });
+  };
 
   return (
     <>
@@ -350,7 +393,7 @@ const Condition = () => {
       </div>
       {conditionDetailList.condition_detail.map((i, j) => {
         return (
-          <div key={`as3bjt${j}`} className="mb-[20px] flex">
+          <div key={`as3bjt${j}`} className="mb-[20px] flex relative">
             <button
               onClick={() => deleteCondition(j)}
               className="mt-[6px] mr-[20px] w-[20px] h-[20px] border-[1px] rounded-[3px] flex items-center justify-center bg-gray-200 active:bg-gray-100"
@@ -398,6 +441,7 @@ const Condition = () => {
                   onChange={(e) => kindOfSubjectHandler(j, e.target.value)}
                   className="mr-[15px] w-[70px] h-[32px] border-[1px] rounded-[3px] text-center"
                 />
+
                 <div className="mr-[15px] pt-[3px] text-[16px] font-bold">
                   개수
                 </div>
@@ -423,31 +467,83 @@ const Condition = () => {
                   {i.subject_list && reg.test(i.subject_list)
                     ? i.subject_list.split(",").map((x, y) => {
                         return (
-                          <div className="mt-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
-                            {x}
-                            <div onClick={() => deleteListOfSubject(j, y)}>
-                              <img src={cancel} width={18} height={18} />
-                            </div>
+                          <div className="flex gap-[3px] items-center">
+                            {x.split("@") &&
+                              x.split("@").map((q, w) => {
+                                return (
+                                  <div className="mt-[10px] mr-[10px] flex items-center justify-between min-w-[180px] h-[32px] pl-[5px] pr-[5px] border-gray-200 border-[1px] box-border rounded-[3px]">
+                                    <input
+                                      defaultValue={q}
+                                      onChange={(e) =>
+                                        addSubejct(j, y, w, e.target.value)
+                                      }
+                                      className="outline-none"
+                                    />
+
+                                    <div
+                                      onClick={() =>
+                                        removeAddtionalSubject(j, y, w)
+                                      }
+                                    >
+                                      <img
+                                        src={cancel}
+                                        width={18}
+                                        height={18}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            <button
+                              onClick={() => addSubejctInput(j, y)}
+                              className="mt-[10px] w-[20px] h-[20px] border-[1px] rounded-[3px] flex items-center justify-center bg-gray-200 active:bg-gray-100"
+                            >
+                              +
+                            </button>
                           </div>
                         );
                       })
                     : i.subject_list && (
-                        <div className="mt-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
-                          {i.subject_list}
-                          <div onClick={() => deleteListOfSubjectFirst(j)}>
-                            <img src={cancel} width={18} height={18} />
-                          </div>
+                        <div className="flex gap-[3px] items-center">
+                          {i.subject_list.split("@") &&
+                            i.subject_list.split("@").map((q, w) => {
+                              return (
+                                <div className="mt-[10px] mr-[10px] flex items-center justify-between min-w-[180px] h-[32px] pl-[5px] pr-[5px] border-gray-200 border-[1px] box-border rounded-[3px]">
+                                  <input
+                                    defaultValue={q}
+                                    onChange={(e) =>
+                                      addSubejct(j, 0, w, e.target.value)
+                                    }
+                                    className="outline-none"
+                                  />
+
+                                  <div
+                                    onClick={() =>
+                                      removeAddtionalSubject(j, 0, w)
+                                    }
+                                  >
+                                    <img src={cancel} width={18} height={18} />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          <button
+                            onClick={() => addSubejctInput(j, 0)}
+                            className="mt-[10px] w-[20px] h-[20px] border-[1px] rounded-[3px] flex items-center justify-center bg-gray-200 active:bg-gray-100"
+                          >
+                            +
+                          </button>
                         </div>
                       )}
                 </div>
-                <div className="mr-[15px] pt-[3px] text-[16px] font-bold">
-                  개수
+                <div className="absolute flex items-center left-[750px]">
+                  <div className="mr-[15px] text-[16px] font-bold">개수</div>
+                  <input
+                    value={i.the_number_of}
+                    onChange={(e) => theNumberOfHandelr(j, e.target.value)}
+                    className="mr-[15px] w-[70px] h-[32px] border-[1px] rounded-[3px] text-center"
+                  />
                 </div>
-                <input
-                  value={i.the_number_of}
-                  onChange={(e) => theNumberOfHandelr(j, e.target.value)}
-                  className="mr-[15px] w-[70px] h-[32px] border-[1px] rounded-[3px] text-center"
-                />
               </>
             )}
           </div>

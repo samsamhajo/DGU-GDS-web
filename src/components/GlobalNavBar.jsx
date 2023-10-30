@@ -5,7 +5,7 @@ const GlobalNavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav class="flex px-[20px] justify-between items-center h-[64px] border-solid border-b-[1px] border-black box-border">
+    <nav class="flex px-[20px] justify-between items-center min-w-[1400px] h-[64px] border-solid border-b-[1px] border-black box-border">
       <h1
         onClick={() => navigate("/")}
         class="text-4xl font-sans font-extrabold text-blue-500 cursor-pointer"

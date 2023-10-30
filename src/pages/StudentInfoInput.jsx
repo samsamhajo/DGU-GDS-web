@@ -22,6 +22,8 @@ const StudentInfoInput = () => {
   /** 엑셀파일 파싱 */
   const handleFileUpload = (e, type) => {
     const fileArr = e.target.files;
+    let tempGradeArr = [];
+    let tempClassificationArr = [];
 
     type == 0 && setGradeFileList([...e.target.files]);
     type == 1 && setClassificationFileList([...e.target.files]);
@@ -40,26 +42,54 @@ const StudentInfoInput = () => {
 
         // 파일이 성적표인경우
         if (type == 0) {
-          setGradeArr([...gradeArr, jsonData]);
+          tempGradeArr.push(jsonData);
+          i == fileArr.length - 1 && setGradeArr([...tempGradeArr]);
         }
         // 파일이 취득분류표인경우
         if (type == 1) {
-          setClassificationArr([...classificationArr, jsonData]);
-          console.log(jsonData);
+          tempClassificationArr.push(jsonData);
+          i == fileArr.length - 1 &&
+            setClassificationArr([...tempClassificationArr]);
         }
       };
       reader.readAsArrayBuffer(fileArr[i]);
     }
   };
 
+  const test = () => {
+    return "test";
+  };
+
+  const click = async () => {
+    const res = await test();
+
+    return res;
+  };
+
+  useEffect(() => {
+    click().then((res) => {
+      console.log(res);
+      console.log("good");
+    });
+  });
+
+  useEffect(() => {
+    console.log("test");
+    console.log(gradeArr);
+  }, [gradeArr]);
+
   /** 취득분류표에서 학수강좌번호, 성적 파싱 */
-  const classNumberParser = (jsonData) => {
-    let classArr = [];
-    let x = 0;
-    let y = 0;
+  const matchingDataParser = (jsonData) => {
+    let dataArr = [];
+    let x = 0; // 파싱시작 인덱스
+    let t = 0; // 수강날짜 인덱스
+    let y = 0; // 교과목명 인덱스
 
     for (let i = 0; i < jsonData.length; i++) {
       for (let j = 0; j < jsonData[i].length; j++) {
+        if (jsonData[i][j] == "년학\n도기") {
+          t = j;
+        }
         if (jsonData[i][j] == "교과목명") {
           x = i + 1;
           y = j;
@@ -72,17 +102,43 @@ const StudentInfoInput = () => {
       // arr[6] && classArr.push(arr[6].split(/\s+/g));
     }
 
+    const reg = /\d{4}-\./; // 정규식
+    const reg2 = /\A-Z{3}\d{4}/; // 학수번호 정규식
+
     for (let i = x; i < jsonData.length; i++) {
-      jsonData[i][y] && classArr.push(jsonData[i][y].split(/\s+/g));
+      let tempArr = [];
+      if (
+        jsonData[i][t] &&
+        !jsonData[i][t].includes(",") &&
+        !jsonData[i][t].includes("교양")
+      ) {
+        let temp0 = jsonData[i][t].split(" ")[0];
+        let temp1 = temp0.split("-");
+        console.log(!isNaN(temp1[0]));
+        if (
+          !isNaN(temp1[0]) &&
+          (!isNaN(temp1[1]) || temp1[1] == "여름" || temp1[1] == "겨울")
+        ) {
+          temp1[1] += "학기";
+          tempArr = temp1;
+
+          if (jsonData[i][y]) {
+            let temp2 = jsonData[i][y].split(/\s+/g);
+
+            tempArr = [...tempArr, ...temp2];
+          }
+          tempArr.length > 0 && dataArr.push(tempArr);
+        }
+      }
     }
 
-    return classArr;
+    return dataArr;
   };
 
   /** 파싱한 학수강좌번호, 성적으로 비교하고 전체성적표, 취득분류표 합치기 */
   const matchingHandler = () => {
     classificationArr.forEach((jsonData, index) => {
-      let parsingData = classNumberParser(jsonData); // 파싱데이터
+      let parsingData = matchingDataParser(jsonData); // 파싱데이터
       console.log(parsingData);
 
       let student_credit = 0; // 학생 총 취득학점
@@ -104,12 +160,55 @@ const StudentInfoInput = () => {
         });
       });
 
+      const testGrade = (x) => {
+        if (
+          x == "A+" ||
+          x == "A0" ||
+          x == "B+" ||
+          x == "B0" ||
+          x == "C+" ||
+          x == "C0" ||
+          x == "D+" ||
+          x == "D0" ||
+          x == "F" ||
+          x == "P"
+        ) {
+          return true;
+        }
+        return false;
+      };
+
       // 합치는 로직
       for (const x of gradeArr) {
         let count = parsingData.length;
-        parsingData.forEach((el) => {
+        parsingData.forEach((el, index) => {
           x.forEach((y) => {
-            if (y[5] == el[0] && y[10] == el[3]) {
+            if (
+              y[1] == el[0] && // 년도
+              y[2] == el[1] && // 학기
+              y[5] == el[2] && // 학수번호
+              y[10] == el.find((o) => testGrade(o)) // 성적
+            ) {
+              console.log(
+                y[1] +
+                  "  " +
+                  el[0] +
+                  "  " +
+                  y[2] +
+                  "  " +
+                  el[1] +
+                  "  " +
+                  y[5] +
+                  "  " +
+                  el[2] +
+                  "  " +
+                  y[10] +
+                  "  " +
+                  el[5] +
+                  "  " +
+                  index
+              );
+
               count--;
             }
           });
@@ -316,12 +415,18 @@ const StudentInfoInput = () => {
               let studentArr = [];
               let sum = 0;
 
-              el[1].forEach((value) => {
-                if (subjectArr.find(value[filteringIndex])) {
-                  studentArr.push(value[filteringIndex]);
-                  sum += 1;
+              for (const value of el[1]) {
+                for (let i = 0; i < subjectArr.length; i++) {
+                  let temp = subjectArr[i].split("@");
+                  for (let j = 0; j < temp.length; j++) {
+                    if (temp[j] == value[filteringIndex]) {
+                      sum += 1;
+                      studentArr.push(value[filteringIndex]);
+                      subjectArr[i] = "";
+                    }
+                  }
                 }
-              });
+              }
 
               if (sum >= Number(item.the_number_of)) {
                 simulation_result.push({
@@ -420,12 +525,18 @@ const StudentInfoInput = () => {
           let filteringEngIndex = el[1][0].findIndex((v) => v == "교과목명"); // 필터링 할 index
           let engSum = 0;
 
-          el[1].forEach((value) => {
-            if (subjectArr.find((v) => v == value[filteringEngIndex])) {
-              studentEngArr.push(value[filteringEngIndex]);
-              engSum += 1;
+          for (const value of el[1]) {
+            for (let i = 0; i < subjectArr.length; i++) {
+              let temp = subjectArr[i].split("@");
+              for (let j = 0; j < temp.length; j++) {
+                if (temp[j] == value[filteringEngIndex]) {
+                  engSum += 1;
+                  studentEngArr.push(value[filteringEngIndex]);
+                  subjectArr[i] = "";
+                }
+              }
             }
-          });
+          }
 
           if (engSum == subjectArr.length) {
             simulation_result.push({
@@ -471,7 +582,11 @@ const StudentInfoInput = () => {
     });
 
     simulationRequest(totalResult).then((res) => {
-      console.log(res);
+      if (res.data == "저장 완료") {
+        alert("저장되었습니다!");
+        return;
+      }
+      alert("실패하였습니다.");
     });
   };
 

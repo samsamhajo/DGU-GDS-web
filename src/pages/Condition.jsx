@@ -96,8 +96,8 @@ const Condition = () => {
         temp.english_condition = english;
 
         temp.english_condition = res.data.english_condition;
-        setAverageGrade(temp.condition_detail.pop().grade);
         setTotalGrade(temp.condition_detail.pop().credit);
+        setAverageGrade(temp.condition_detail.pop().grade);
         setConditionDetailList(temp);
         return;
       }
@@ -214,16 +214,16 @@ const Condition = () => {
       subject_information: "",
       kind_of_condition: "03",
       kind_of_subject: "",
-      credit: averageGrade,
+      credit: "",
       subject_list: "",
       the_number_of: "",
-      grade: "",
+      grade: Number(averageGrade),
     };
     temp.condition_detail[length + 1] = {
       subject_information: "",
       kind_of_condition: "04",
       kind_of_subject: "",
-      credit: totalGrade,
+      credit: Number(totalGrade),
       subject_list: "",
       the_number_of: "",
       grade: "",

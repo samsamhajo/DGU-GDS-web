@@ -456,13 +456,13 @@ const StudentInfoInput = () => {
             }
             // 학점 평점
             if (item.kind_of_condition == "03") {
-              if (Number(el[2]) >= Number(item.credit)) {
+              if (Number(el[2]) >= Number(item.grade)) {
                 simulation_result.push({
                   subject_information: item.subject_information,
                   kind_of_condition: item.kind_of_condition,
                   kind_of_subject: item.kind_of_subject,
-                  credit: item.credit,
-                  student_credit: Number(el[2]),
+                  gpa: item.grade,
+                  student_gpa: Number(el[2]),
                   required_course: null,
                   student_course: null,
                   english_level: "",
@@ -473,8 +473,8 @@ const StudentInfoInput = () => {
                   subject_information: item.subject_information,
                   kind_of_condition: item.kind_of_condition,
                   kind_of_subject: item.kind_of_subject,
-                  credit: item.credit,
-                  student_credit: Number(el[2]),
+                  gpa: item.grade,
+                  student_gpa: Number(el[2]),
                   required_course: null,
                   student_course: null,
                   english_level: "",
@@ -628,11 +628,14 @@ const StudentInfoInput = () => {
       <div>전공</div> */}
       <div class="mb-[15px] flex gap-[50px]">
         <div>
-          <label htmlFor="file0">
-            <div class="mb-[12px] flex items-center justify-center w-[135px] h-[32px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50 cursor-pointer">
-              전체성적표 업로드
-            </div>
-          </label>
+          <div class="flex gap-2 mb-[12px] items-center">
+            <label htmlFor="file0" class="w-[135px]">
+              <div class="flex items-center justify-center w-[135px] h-[32px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50 cursor-pointer">
+                전체성적표 업로드
+              </div>
+            </label>
+            <div class="text-sm text-gray-500">파일 형식 : xlsx, xls</div>
+          </div>
           {/* <input
             onChange={(e) => handleExcelFileChange(e)}
             id="file1"
@@ -645,17 +648,21 @@ const StudentInfoInput = () => {
           </div>
         </div>
         <div>
-          <label htmlFor="file1">
-            <div class="mb-[12px] flex items-center justify-center w-[135px] h-[32px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50 cursor-pointer">
-              취득분류표 업로드
-            </div>
-          </label>
+          <div class="flex gap-2 mb-[12px] items-center">
+            <label htmlFor="file1" class="w-[135px]">
+              <div class="flex items-center justify-center w-[135px] h-[32px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50 cursor-pointer">
+                취득분류표 업로드
+              </div>
+            </label>
+            <div class="text-sm text-gray-500">파일 형식 : xlsx, xls</div>
+          </div>
           <input
             id="file0"
             type="file"
             onChange={(e) => handleFileUpload(e, 0)}
             multiple
             class="hidden"
+            accept=".xlsx,.xls"
           />
           <input
             id="file1"
@@ -663,6 +670,7 @@ const StudentInfoInput = () => {
             onChange={(e) => handleFileUpload(e, 1)}
             multiple
             class="hidden"
+            accept=".xlsx,.xls"
           />
           <div class="p-[10px] w-[420px] h-[210px] border-[1px] border-gray-300 rounded-[3px] box-border ">
             {classificationFileList.map((file) => {

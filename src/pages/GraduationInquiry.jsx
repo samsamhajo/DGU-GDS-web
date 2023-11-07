@@ -138,7 +138,7 @@ const GraduationInquiry = () => {
                           {v.kind_of_condition == "02" &&
                             `다음 과목 중 ${v.credit}과목 이상 이수한다. / ${v.required_course} / (이수한 과목: ${v.student_course})`}
                           {v.kind_of_condition == "03" &&
-                            `졸업학점 평점은 ${v.credit} 이상이어야 한다. (${v.student_credit}/${v.credit})`}
+                            `졸업학점 평점은 ${v.gpa} 이상이어야 한다. (${v.student_gpa}/${v.gpa})`}
                           {v.kind_of_condition == "04" &&
                             `전체학점은 ${v.credit}학점 이상 이수한다. (${v.student_credit}/${v.credit})`}
                           {v.kind_of_condition == "05" &&

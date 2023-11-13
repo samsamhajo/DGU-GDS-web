@@ -210,6 +210,7 @@ const Condition = () => {
   const inputConditionHandler = async () => {
     let temp = conditionDetailList;
     let length = temp.condition_detail.length;
+
     temp.condition_detail[length] = {
       subject_information: "",
       kind_of_condition: "03",
@@ -536,7 +537,7 @@ const Condition = () => {
                         </div>
                       )}
                 </div>
-                <div className="absolute flex items-center left-[750px]">
+                <div className="absolute flex items-center left-[780px]">
                   <div className="mr-[15px] text-[16px] font-bold">개수</div>
                   <input
                     value={i.the_number_of}
@@ -544,6 +545,26 @@ const Condition = () => {
                     className="mr-[15px] w-[70px] h-[32px] border-[1px] rounded-[3px] text-center"
                   />
                 </div>
+              </>
+            )}
+            {i.kind_of_condition == "77" && (
+              <>
+                <div className="mr-[15px] pt-[3px] text-[16px] font-bold">
+                  과목 리스트
+                </div>
+                <textarea
+                  value={i.kind_of_subject}
+                  onChange={(e) => kindOfSubjectHandler(j, e.target.value)}
+                  className="mr-[15px] w-[200px] h-[200px] border-[1px] rounded-[3px] text-center"
+                />
+                <div className="mr-[15px] pt-[3px] text-[16px] font-bold">
+                  개수
+                </div>
+                <input
+                  value={i.credit}
+                  onChange={(e) => creditHandler(j, e.target.value)}
+                  className="mr-[15px] w-[70px] h-[32px] border-[1px] rounded-[3px] text-center"
+                />
               </>
             )}
           </div>

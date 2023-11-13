@@ -410,7 +410,9 @@ const StudentInfoInput = () => {
             }
             // 과목리스트 중 X개 이상 필수
             if (item.kind_of_condition == "02") {
-              let filteringIndex = el[1][0].findIndex((v) => v == "교과목명"); // 필터링 할  index
+              let filteringIndex = el[1][0].findIndex(
+                (v) => v == item.subject_information
+              ); // 필터링 할  index
               let subjectArr = item.subject_list.split(","); // 과목 리스트
               let studentArr = [];
               let sum = 0;
@@ -448,6 +450,56 @@ const StudentInfoInput = () => {
                   credit: item.the_number_of,
                   student_credit: sum,
                   required_course: item.subject_list,
+                  student_course: studentArr.join(),
+                  english_level: "",
+                  pass_info: "F",
+                });
+              }
+            }
+            // 과목리스트 중 X개 이상 필수(개별)
+            if (item.kind_of_condition == "77") {
+              let filteringIndex = el[1][0].findIndex(
+                (v) => v == item.subject_information
+              ); // 필터링 할  index
+              let subjectArr = item.kind_of_subject
+                .replace(/ /g, "")
+                .split("\n"); // 과목 리스트
+              let studentArr = [];
+              let sum = 0;
+
+              for (const value of el[1]) {
+                for (let i = 0; i < subjectArr.length; i++) {
+                  let temp = subjectArr[i].split("@");
+                  for (let j = 0; j < temp.length; j++) {
+                    if (temp[j] == value[filteringIndex]) {
+                      sum += 1;
+                      studentArr.push(value[filteringIndex]);
+                      subjectArr[i] = "";
+                    }
+                  }
+                }
+              }
+
+              if (sum >= Number(item.credit)) {
+                simulation_result.push({
+                  subject_information: item.subject_information,
+                  kind_of_condition: item.kind_of_condition,
+                  kind_of_subject: item.kind_of_subject,
+                  credit: item.credit,
+                  student_credit: sum,
+                  required_course: item.kind_of_subject.replace(/ /g, ""),
+                  student_course: studentArr.join(),
+                  english_level: "",
+                  pass_info: "T",
+                });
+              } else {
+                simulation_result.push({
+                  subject_information: item.subject_information,
+                  kind_of_condition: item.kind_of_condition,
+                  kind_of_subject: item.kind_of_subject,
+                  credit: item.credit,
+                  student_credit: sum,
+                  required_course: item.kind_of_subject.replace(/ /g, ""),
                   student_course: studentArr.join(),
                   english_level: "",
                   pass_info: "F",

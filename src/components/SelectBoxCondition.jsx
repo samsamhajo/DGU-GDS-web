@@ -12,6 +12,7 @@ const SelectBoxCondition = ({
     "해당 종류의 과목 X 학점 이상",
     "해당 종류의 과목 X개 이상",
     "과목 리스트중 X 과목 이상 필수",
+    "과목 리스트중 X 과목 이상 필수(개별)",
   ]); // 학과리스트
   const [value, setValue] = useState(""); // 선택된 값
   const [isClicked, setIsClicked] = useState(false); // 클릭된 상황 유무
@@ -36,6 +37,9 @@ const SelectBoxCondition = ({
       case "과목 리스트중 X 과목 이상 필수":
         code = "02";
         break;
+      case "과목 리스트중 X 과목 이상 필수(개별)":
+        code = "77";
+        break;
     }
     return code;
   };
@@ -51,6 +55,9 @@ const SelectBoxCondition = ({
         break;
       case "02":
         setValue("과목 리스트중 X 과목 이상 필수");
+        break;
+      case "77":
+        setValue("과목 리스트중 X 과목 이상 필수(개별)");
         break;
     }
   };
@@ -73,11 +80,11 @@ const SelectBoxCondition = ({
       tabIndex={0}
       className={
         isClicked
-          ? "mr-[15px] w-[200px] h-[32px] font-medium text-[12px] overflow-visible cursor-default"
-          : "mr-[15px] w-[200px] h-[32px] font-medium text-[12px] overflow-hidden cursor-default"
+          ? "mr-[15px] w-[230px] h-[32px] font-medium text-[12px] overflow-visible cursor-default"
+          : "mr-[15px] w-[230px] h-[32px] font-medium text-[12px] overflow-hidden cursor-default"
       }
     >
-      <div className="flex items-center justify-between px-[3px] border-[1px] rounded-[3px] w-[200px] h-[32px]">
+      <div className="flex items-center justify-between px-[3px] border-[1px] rounded-[3px] w-[230px] h-[32px]">
         <div>{value}</div>
 
         <img
@@ -91,7 +98,7 @@ const SelectBoxCondition = ({
           <div
             onClick={() => setValue(i)}
             key={`condition${j}`}
-            className="flex items-center px-[3px] border-x-[1px] border-b-[1px] rounded-[3px] w-[200px] h-[32px]"
+            className="flex items-center px-[3px] border-x-[1px] border-b-[1px] rounded-[3px] w-[230px] h-[32px]"
           >
             {i}
           </div>

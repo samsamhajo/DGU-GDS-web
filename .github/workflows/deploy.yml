@@ -1,0 +1,60 @@
+on:
+  # push할 때마다 액션 실행하게 하려면 # 제거
+  #push:
+  #branches:
+  #-develop
+
+  workflow_dispatch: # 수동 실행 설정, 깃허브 액션 페이지에서 클릭으로 실행 가능
+    inputs:
+      component:
+        description: "What component"
+        required: true
+        default: "web-dev"
+      profile:
+        description: "What profile"
+        required: true
+        default: "deploy-dev"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["16.x"]
+
+    steps:
+      - name: Checkout source code.
+        uses: actions/checkout@v3.3.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: rm -rf node_modules && rm -rf yarn.lock && yarn cache clean && yarn install
+
+      - name: Run build
+        run: yarn build
+
+      - name: Current timestamp
+        id: timestamp
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H-%M-%S-%3NZ')"
+
+      - name: remove node_modules
+        run: rm -rf node_modules
+
+      - name: Generate deployment package # (1)
+        run: zip ./deploy.zip -r * .[^.]*
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: DGU-GDS
+          environment_name: DGU-GDS-dev
+          version_label: "${{ steps.timestamp.outputs.date }}"
+          region: us-west-1
+          deployment_package: deploy.zip

@@ -5,7 +5,7 @@ const GlobalNavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav class="flex px-[20px] justify-between items-center h-[64px] border-solid border-b-[1px] border-black box-border">
+    <nav class="flex px-[20px] justify-between items-center min-w-[1400px] h-[64px] border-solid border-b-[1px] border-black box-border">
       <h1
         onClick={() => navigate("/")}
         class="text-4xl font-sans font-extrabold text-blue-500 cursor-pointer"
@@ -13,10 +13,7 @@ const GlobalNavBar = () => {
         DGD
       </h1>
       <ul class="flex gap-[20px] items-center">
-        <li
-          onClick={() => navigate("/memberManagement")}
-          class="cursor-pointer"
-        >
+        <li onClick={() => navigate("/user-list")} class="cursor-pointer">
           회원 관리
         </li>
         <li onClick={() => navigate("/condition")} class="cursor-pointer">

@@ -13,10 +13,7 @@ const GlobalNavBar = () => {
         DGD
       </h1>
       <ul class="flex gap-[20px] items-center">
-        <li
-          onClick={() => navigate("/memberManagement")}
-          class="cursor-pointer"
-        >
+        <li onClick={() => navigate("/user-list")} class="cursor-pointer">
           회원 관리
         </li>
         <li onClick={() => navigate("/condition")} class="cursor-pointer">

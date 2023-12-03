@@ -1,172 +1,174 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { signUpRequest } from "../api/api";
 
 const SignUp = () => {
-    const [formData, setFormData] = useState({
-        userid: '',
-        password: '',
-        confirmPassword: '',
-        position: '',
-        department: '',
-        major: '',
-        employeeId: '',
-        username: '',
-        email: '',
+  const [formData, setFormData] = useState({
+    user_id: '',
+    user_password: '',
+    confirmPassword: '',
+    user_position: '',
+    user_department: '',
+    user_majordepartment: '',
+    user_number: '',
+    user_name: '',
+    user_email: '',
+  });
+
+const [signupError, setSignupError] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
+  };
 
-    const [signupError, setSignupError] = useState(false);
-    const [signupSuccess, setSignupSuccess] = useState(false);
+  const handleSignUp = async () => {
+    const { user_id, user_password, confirmPassword, user_position, user_department, user_majordepartment, user_number, user_name, user_email } = formData;
 
-    const navigate = useNavigate();
+    if (!user_id || !user_password || !confirmPassword || !user_position || !user_department || !user_majordepartment || !user_number || !user_name || !user_email) {
+      console.log('누락된 정보가 있습니다.');
+      return;
+    }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
+    if (user_password === confirmPassword) {
+      const userData = {
+        user_id,
+        user_position,
+        user_department,
+        user_majordepartment,
+        user_number,
+        user_name,
+        user_email,
+      };
 
-    const handleSignUp = () => {
-        const { userid, password, confirmPassword, position, department, major, employeeId, username, email } = formData;
+      try {
+        // API 호출
+        const response = await signUpRequest(userData);
 
-        if (!userid || !password || !confirmPassword || !position || !department || !major || !employeeId || !username || !email) {
-            console.log('누락된 정보가 있습니다.');
-            return;
-        }
+        // API 호출이 성공하면 회원가입 성공 처리
+        console.log('회원가입 성공!');
+        setSignupSuccess(true);
+        setSignupError(false);
 
-        if (password === confirmPassword) {
-            // 회원 정보를 객체로 저장
-            const userData = {
-                userid,
-                position,
-                department,
-                major,
-                employeeId,
-                username,
-                email,
-            };
-
-            // 기존 사용자 정보 불러오기
-            const storedUserData = localStorage.getItem('userList');
-            const parsedUserData = storedUserData ? JSON.parse(storedUserData) : [];
-
-            // 새로운 사용자 정보 추가
-            parsedUserData.push(userData);
-
-            // 사용자 정보를 localStorage에 저장
-            localStorage.setItem('userList', JSON.stringify(parsedUserData));
-
-            console.log('회원가입 성공!');
-            setSignupSuccess(true);
-            setSignupError(false);
-
-            navigate('/signup-complete');
-        } else {
-            console.log('비밀번호와 확인 비밀번호가 일치하지 않습니다.');
-            setSignupSuccess(false);
-            setSignupError(true);
-        }
-    };
+        // 이후 페이지 이동 등 추가 작업 수행
+        navigate('/signup-complete');
+      } catch (error) {
+        // API 호출이 실패하면 오류 메시지 처리
+        console.log('회원가입 실패:', error.message);
+        setSignupSuccess(false);
+        setSignupError(true);
+      }
+    } else {
+      console.log('비밀번호와 확인 비밀번호가 일치하지 않습니다.');
+      setSignupSuccess(false);
+      setSignupError(true);
+    }
+  };
 
     return (
         <div className="w-full flex justify-center items-center min-h-screen bg-white text-blue-500">
             <div className="w-80 p-4 border rounded shadow max-w-full">
                 <h1 className="text-2xl font-bold mb-4">회원가입</h1>
 
-                <label htmlFor="position" className="font-semibold text-black block mb-1">
+                <label htmlFor="user_position" className="font-semibold text-black block mb-1">
                     직책
                 </label>
                 <input
                     type="text"
-                    id="position"
-                    name="position"
+                    id="user_position"
+                    name="user_position"
                     placeholder="직책을 입력해주세요"
-                    value={formData.position}
+                    value={formData.user_position}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="department" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_department" className="font-semibold text-black block mt-2 mb-1">
                     부서
                 </label>
                 <input
                     type="text"
-                    id="department"
-                    name="department"
+                    id="user_department"
+                    name="user_department"
                     placeholder="부서를 입력해주세요"
-                    value={formData.department}
+                    value={formData.user_department}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="major" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_majordepartment" className="font-semibold text-black block mt-2 mb-1">
                     학과
                 </label>
                 <input
                     type="text"
-                    id="major"
-                    name="major"
+                    id="user_majordepartment"
+                    name="user_majordepartment"
                     placeholder="학과를 입력해주세요"
-                    value={formData.major}
+                    value={formData.user_majordepartment}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="employeeId" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_number" className="font-semibold text-black block mt-2 mb-1">
                     교번
                 </label>
                 <input
                     type="text"
-                    id="employeeId"
-                    name="employeeId"
+                    id="user_number"
+                    name="user_number"
                     placeholder="교번을 입력해주세요"
-                    value={formData.employeeId}
+                    value={formData.user_number}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="username" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_name" className="font-semibold text-black block mt-2 mb-1">
                     이름
                 </label>
                 <input
                     type="text"
-                    id="username"
-                    name="username"
+                    id="user_name"
+                    name="user_name"
                     placeholder="이름을 입력해주세요"
-                    value={formData.username}
+                    value={formData.user_name}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="email" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_email" className="font-semibold text-black block mt-2 mb-1">
                     이메일
                 </label>
                 <input
-                    type="email"
-                    id="email"
-                    name="email"
+                    type="user_email"
+                    id="user_email"
+                    name="user_email"
                     placeholder="이메일을 입력해주세요"
-                    value={formData.email}
+                    value={formData.user_email}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="userid" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_id" className="font-semibold text-black block mt-2 mb-1">
                     아이디
                 </label>
                 <input
                     type="text"
-                    id="userid"
-                    name="userid"
+                    id="user_id"
+                    name="user_id"
                     placeholder="아이디를 입력해주세요"
-                    value={formData.userid}
+                    value={formData.user_id}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
-                <label htmlFor="password" className="font-semibold text-black block mt-2 mb-1">
+                <label htmlFor="user_password" className="font-semibold text-black block mt-2 mb-1">
                     비밀번호
                 </label>
                 <input
-                    type="password"
-                    id="password"
-                    name="password"
+                    type="user_password"
+                    id="user_password"
+                    name="user_password"
                     placeholder="비밀번호를 입력해주세요"
-                    value={formData.password}
+                    value={formData.user_password}
                     onChange={handleChange}
                     className="py-1 px-4 border rounded w-full"
                 />
@@ -174,7 +176,7 @@ const SignUp = () => {
                     비밀번호 확인
                 </label>
                 <input
-                    type="password"
+                    type="user_password"
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="비밀번호를 다시 입력해주세요"

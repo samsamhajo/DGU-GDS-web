@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { loginRequest } from "../api/api";
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [user_id, setuser_id] = useState('');
+    const [user_password, setuser_password] = useState('');
     const [loginError, setLoginError] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        // 간단한 가상의 로그인 검증
-        if (username === 'admin' && password === 'admin123') {
-            // 로그인 성공 시 처리
-            console.log('로그인 성공!');
-            setLoginError(false);
-        } else {
-            // 로그인 실패 시 처리
-            console.log('로그인 실패. 사용자 이름 또는 비밀번호를 확인하세요.');
+    const handleLogin = async () => {
+        try {
+            // 로그인 API 호출
+            const response = await loginRequest(user_id, user_password);
+
+            // 응답을 기반으로 로그인 성공 여부 확인
+            if (response.data.success) {
+                console.log('로그인 성공!');
+                setLoginError(false);
+
+                // 로그인 성공 시 추가 작업 수행
+                navigate('/dashboard');
+            } else {
+                console.log('로그인 실패. 사용자 이름 또는 비밀번호를 확인하세요.');
+                setLoginError(true);
+            }
+        } catch (error) {
+            console.error('로그인 에러:', error);
             setLoginError(true);
         }
     };
@@ -23,30 +34,30 @@ const LoginPage = () => {
         <div className="flex justify-center items-center h-screen bg-white text-blue-500 flex-col">
             <h1 className="text-4xl font-bold mb-4">DGU</h1>
             <div className="flex flex-col space-y-4">
-                <label htmlFor="username" className="font-semibold text-black">
+                <label htmlFor="user_id" className="font-semibold text-black">
                     아이디
                 </label>
                 <input
                     type="text"
-                    id="username"
+                    id="user_id"
                     placeholder="아이디를 입력해주세요"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={user_id}
+                    onChange={(e) => setuser_id(e.target.value)}
                     className="py-2 px-4 border rounded w-80 mb-2"
                 />
-                <label htmlFor="password" className="font-semibold text-black">
+                <label htmlFor="user_password" className="font-semibold text-black">
                     비밀번호
                 </label>
                 <input
-                    type="password"
-                    id="password"
+                    type="user_password"
+                    id="user_password"
                     placeholder="비밀번호를 입력해주세요"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={user_password}
+                    onChange={(e) => setuser_password(e.target.value)}
                     className="py-2 px-4 border rounded w-80 mb-2"
                 />
 
-<button
+                <button
                     onClick={handleLogin}
                     className="bg-blue-500 text-white py-2 px-6 rounded-lg font-bold hover:bg-blue-600 transition duration-200 w-80"
                 >
@@ -55,13 +66,13 @@ const LoginPage = () => {
                 {loginError && (
                     <p className="text-red-500 text-sm">사용자 이름 또는 비밀번호가 잘못되었습니다.</p>
                 )}
-                
-                <div className="flex justify-center w-80"> {/* 중앙 정렬 및 넓이 설정을 위한 스타일 추가 */}
+
+                <div className="flex justify-center w-80">
                     <Link to="/signup" className="bg-blue-500 text-white py-2 px-6 rounded-lg font-bold hover:bg-blue-600 transition duration-200 text-center w-full">
                         회원가입
                     </Link>
                 </div>
-                
+
                 <Link to="/" className="text-blue-500 hover:underline mt-2">
                     홈으로 돌아가기
                 </Link>
@@ -69,6 +80,7 @@ const LoginPage = () => {
         </div>
     );
 };
+
 export default LoginPage;
 
 

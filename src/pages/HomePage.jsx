@@ -4,16 +4,6 @@ import { Link } from "react-router-dom";
 const HomePage = () => {
   return (
     <div className="bg-white h-screen">
-      <header className="bg-blue-500 py-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link
-            to="/confirmation"
-            className="text-white font-bold hover:underline"
-          >
-            회원관리
-          </Link>
-        </div>
-      </header>
       <div className="container mx-auto flex justify-center items-center h-screen">
         <div className="text-blue-500 flex flex-col items-center space-y-4">
           <h1 className="text-4xl font-bold mb-4">DGU</h1>

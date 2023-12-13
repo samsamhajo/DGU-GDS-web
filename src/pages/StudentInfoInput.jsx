@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
 import { useState } from "react";
 import { getConditionRequest, simulationRequest } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 const StudentInfoInput = () => {
   const [studentInfoArr, setStudentInfoArr] = useState([]); // 매칭 후 학생 정보 리스트
@@ -18,6 +19,8 @@ const StudentInfoInput = () => {
   const [conditionArr, setConditionArr] = useState([]); // 졸업 조건 리스트
 
   const [trigger, setTrigger] = useState(false);
+
+  const navigate = useNavigate();
 
   /** 엑셀파일 파싱 */
   const handleFileUpload = (e, type) => {
@@ -137,6 +140,7 @@ const StudentInfoInput = () => {
 
   /** 파싱한 학수강좌번호, 성적으로 비교하고 전체성적표, 취득분류표 합치기 */
   const matchingHandler = () => {
+    let stuTemp = [];
     classificationArr.forEach((jsonData, index) => {
       let parsingData = matchingDataParser(jsonData); // 파싱데이터
       console.log(parsingData);
@@ -234,12 +238,10 @@ const StudentInfoInput = () => {
             english_level,
           ];
 
-          let stuTemp = studentInfoArr;
           stuTemp.push(temp);
-          setStudentInfoArr([...stuTemp]);
-          break;
         }
       }
+      setStudentInfoArr([...stuTemp]);
     });
   };
 
@@ -566,6 +568,7 @@ const StudentInfoInput = () => {
 
           // 영어시뮬레이션
           console.log(condition.english_condition);
+          console.log(el);
           const engIndex = condition.english_condition.findIndex(
             (v) => v.english_level == el[4]
           );
@@ -649,6 +652,16 @@ const StudentInfoInput = () => {
   useEffect(() => {
     trigger && graduationSimulator();
   }, [trigger]);
+
+  /** 로그인 안하면 접근 불가 */
+  useEffect(() => {
+    const isLogin = sessionStorage.getItem("login");
+    if (isLogin) {
+      return;
+    } else {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
@@ -740,7 +753,7 @@ const StudentInfoInput = () => {
       <div class="mb-[30px] border-t-[1px] border-gray-300" />
       <h3 class="mb-[20px] font-semibold">학쟁 정보 리스트</h3>
       <div class="mb-[20px]">
-        <div class="flex w-[700px] h-[25px] border-y-[1px] border-l-[1px] border-black text-[14px] font-semibold">
+        <div class="flex w-[400px] h-[25px] border-y-[1px] border-l-[1px] border-black text-[14px] font-semibold">
           <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
             학번
           </div>
@@ -753,20 +766,11 @@ const StudentInfoInput = () => {
           <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
             과정
           </div>
-          <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black ">
-            ipp
-          </div>
-          <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
-            수상기록
-          </div>
-          <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
-            기타
-          </div>
         </div>
         {/** 변환된 데이터 부분 반복 */}
         {studentInfoArr.map((i) => {
           return (
-            <div class="flex w-[700px] h-[25px] border-b-[1px] border-l-[1px] border-black text-[12px] font-medium">
+            <div class="flex w-[400px] h-[25px] border-b-[1px] border-l-[1px] border-black text-[12px] font-medium">
               <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
                 {i[0].student_code}
               </div>
@@ -778,21 +782,6 @@ const StudentInfoInput = () => {
               </div>
               <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
                 {i[0].student_course == "Y" ? "심화과정" : "일반과정"}
-              </div>
-              <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black ">
-                <button class="flex items-center justify-center w-[14px] h-[14px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50">
-                  +
-                </button>
-              </div>
-              <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
-                <button class="flex items-center justify-center w-[14px] h-[14px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50">
-                  +
-                </button>
-              </div>
-              <div class="flex items-center justify-center w-[100px] border-r-[1px] border-black">
-                <button class="flex items-center justify-center w-[14px] h-[14px] border-[1px] border-gray-300 rounded-[3px] box-border  text-[14px] font-medium text-center bg-slate-100 active:bg-slate-50">
-                  +
-                </button>
               </div>
             </div>
           );

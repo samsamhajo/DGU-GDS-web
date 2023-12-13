@@ -8,6 +8,7 @@ import {
   SelectBoxDepartment,
 } from "../components";
 import { cancel } from "../assets";
+import { useNavigate } from "react-router-dom";
 
 const Condition = () => {
   const [conditionDetailList, setConditionDetailList] = useState({
@@ -77,6 +78,8 @@ const Condition = () => {
 
   const [averageGrade, setAverageGrade] = useState(0); //졸업학점평점
   const [totalGrade, setTotalGrade] = useState(""); //졸업 학점
+
+  const navigate = useNavigate();
 
   /** 졸업 조건 조회 후 세팅하는 함수 */
   const conditionDetailListSetting = (
@@ -361,6 +364,16 @@ const Condition = () => {
     setConditionDetailList({ ...temp1 });
   };
 
+  /** 로그인 안하면 접근 불가 */
+  useEffect(() => {
+    const isLogin = sessionStorage.getItem("login");
+    if (isLogin) {
+      return;
+    } else {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <>
       <h2 className="mb-[50px] text-2xl font-medium">졸업 조건 페이지</h2>
@@ -623,7 +636,7 @@ const Condition = () => {
               {i.list_of_subject && reg.test(i.list_of_subject)
                 ? i.list_of_subject.split(",").map((x, y) => {
                     return (
-                      <div className="mb-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
+                      <div className="mb-[3px] flex items-center justify-between min-w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
                         {x}
                         <div onClick={() => deleteEnglishList(index, y)}>
                           {" "}
@@ -633,7 +646,7 @@ const Condition = () => {
                     );
                   })
                 : i.list_of_subject && (
-                    <div className="mb-[3px] flex items-center justify-between w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
+                    <div className="mb-[3px] flex items-center justify-between min-w-[180px] h-[32px] pl-[5px] pr-[5px] bg-gray-200 rounded-[3px]">
                       {i.list_of_subject}
                       <div onClick={() => deleteEnglishListFirst(index)}>
                         {" "}

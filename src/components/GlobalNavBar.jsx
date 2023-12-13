@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const GlobalNavBar = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("master", "1234");
+  }, []);
 
   return (
     <nav class="flex px-[20px] justify-between items-center min-w-[1400px] h-[64px] border-solid border-b-[1px] border-black box-border">

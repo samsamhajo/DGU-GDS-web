@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SelectBox180 } from "../components";
 import { resultRequest } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 const GraduationInquiry = () => {
   const [major, setMajor] = useState("컴퓨터공학과"); // 학과
@@ -9,6 +10,8 @@ const GraduationInquiry = () => {
   const [semester, setSemester] = useState("1"); // 학기
   const [result, setResult] = useState([]);
   const [detail, setDetail] = useState([]);
+
+  const navigate = useNavigate();
 
   /** 조회 */
   const inquiryHandler = () => {
@@ -30,6 +33,16 @@ const GraduationInquiry = () => {
   useEffect(() => {
     console.log(result);
   }, [result]);
+
+  /** 로그인 안하면 접근 불가 */
+  useEffect(() => {
+    const isLogin = sessionStorage.getItem("login");
+    if (isLogin) {
+      return;
+    } else {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>

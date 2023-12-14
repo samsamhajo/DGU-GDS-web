@@ -59,28 +59,6 @@ const StudentInfoInput = () => {
     }
   };
 
-  const test = () => {
-    return "test";
-  };
-
-  const click = async () => {
-    const res = await test();
-
-    return res;
-  };
-
-  useEffect(() => {
-    click().then((res) => {
-      console.log(res);
-      console.log("good");
-    });
-  });
-
-  useEffect(() => {
-    console.log("test");
-    console.log(gradeArr);
-  }, [gradeArr]);
-
   /** 취득분류표에서 학수강좌번호, 성적 파싱 */
   const matchingDataParser = (jsonData) => {
     let dataArr = [];
@@ -117,7 +95,7 @@ const StudentInfoInput = () => {
       ) {
         let temp0 = jsonData[i][t].split(" ")[0];
         let temp1 = temp0.split("-");
-        console.log(!isNaN(temp1[0]));
+
         if (
           !isNaN(temp1[0]) &&
           (!isNaN(temp1[1]) || temp1[1] == "여름" || temp1[1] == "겨울")
@@ -143,7 +121,6 @@ const StudentInfoInput = () => {
     let stuTemp = [];
     classificationArr.forEach((jsonData, index) => {
       let parsingData = matchingDataParser(jsonData); // 파싱데이터
-      console.log(parsingData);
 
       let student_credit = 0; // 학생 총 취득학점
       let student_gpa = 0; // 학생 평점 평균
@@ -193,25 +170,25 @@ const StudentInfoInput = () => {
               y[5] == el[2] && // 학수번호
               y[10] == el.find((o) => testGrade(o)) // 성적
             ) {
-              console.log(
-                y[1] +
-                  "  " +
-                  el[0] +
-                  "  " +
-                  y[2] +
-                  "  " +
-                  el[1] +
-                  "  " +
-                  y[5] +
-                  "  " +
-                  el[2] +
-                  "  " +
-                  y[10] +
-                  "  " +
-                  el[5] +
-                  "  " +
-                  index
-              );
+              // console.log(
+              //   y[1] +
+              //     "  " +
+              //     el[0] +
+              //     "  " +
+              //     y[2] +
+              //     "  " +
+              //     el[1] +
+              //     "  " +
+              //     y[5] +
+              //     "  " +
+              //     el[2] +
+              //     "  " +
+              //     y[10] +
+              //     "  " +
+              //     el[5] +
+              //     "  " +
+              //     index
+              // );
 
               count--;
             }
@@ -277,22 +254,25 @@ const StudentInfoInput = () => {
     // });
 
     // 입학년도로 졸업조건 불러와서 저장
-    enterList.forEach((el, index) => {
+    for (let i = 0; i < enterList.length; i++) {
       getConditionRequest(
         `${major}`,
-        `${el.year}`,
+        `${enterList[i].year}`,
         "단일전공",
-        el.course == "Y" ? "심화과정" : "일반과정"
+        enterList[i].course == "Y" ? "심화과정" : "일반과정"
       ).then((res) => {
-        setConditionArr([
-          ...conditionArr,
-          { year: el.year, course: el.course, ...res.data },
-        ]);
-        if (enterList.length == index + 1) {
+        let x = conditionArr;
+        x.push({
+          year: enterList[i].year,
+          course: enterList[i].course,
+          ...res.data,
+        });
+        setConditionArr([...x]);
+        if (enterList.length == i + 1) {
           setTrigger(true);
         }
       });
-    });
+    }
   };
 
   useEffect(() => {
@@ -301,7 +281,6 @@ const StudentInfoInput = () => {
 
   /** 졸업조건 찾아서 졸업 판별후 api 콜 */
   const graduationSimulator = () => {
-    console.log("실행중");
     let totalResult = { studentInfoList: [] };
     let defaultInfo = {
       graduation_year: graduation_year,
@@ -314,7 +293,6 @@ const StudentInfoInput = () => {
       student_graduation: "T",
       student_document: "P",
     }; // 학생 기본정보
-    let simulation_result = []; // 조건 판별 결과
 
     studentInfoArr.forEach((el) => {
       // 기본정보 할당
@@ -328,6 +306,7 @@ const StudentInfoInput = () => {
           el[0].student_code.substr(2, 2) == condition.year &&
           el[0].student_course == condition.course
         ) {
+          let simulation_result = []; // 조건 판별 결과
           condition.condition_detail.forEach((item) => {
             // 해당종류의 과목 X학점 이상
             if (item.kind_of_condition == "00") {
@@ -567,8 +546,7 @@ const StudentInfoInput = () => {
           });
 
           // 영어시뮬레이션
-          console.log(condition.english_condition);
-          console.log(el);
+
           const engIndex = condition.english_condition.findIndex(
             (v) => v.english_level == el[4]
           );
@@ -626,8 +604,6 @@ const StudentInfoInput = () => {
             condition_result: simulation_result,
           });
 
-          console.log(totalResult);
-
           /**
             
           
@@ -637,6 +613,7 @@ const StudentInfoInput = () => {
     });
 
     simulationRequest(totalResult).then((res) => {
+      console.log(totalResult);
       if (res.data == "저장 완료") {
         alert("저장되었습니다!");
         return;
